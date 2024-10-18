@@ -1,0 +1,9 @@
+Library
+Temp
+Logs
+.idea
+*.csproj
+obj/Debug
+Assets/Plugins/Editor/JetBrains/JetBrains.Rider.Unity.Editor.Plugin.Repacked.dll*
+PlayrionTechnicalTest.sln
+UserSettings/*
