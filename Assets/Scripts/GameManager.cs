@@ -22,7 +22,6 @@ public class TicketMachine
         Speed = machine.Speed;
         Available = true;
 
-        Debug.Log("Found machine " + ToString());
     }
 
     public override string ToString() => $"Name: {Name} Pos: {Position} Speed: {Speed} Available {Available}";
@@ -32,63 +31,76 @@ public class GameManager : GameSingleton
 {
     private const float TrainSpeed = 10f;
 
-    public static int StartTime = 54060; // 15:00:01
-    public static int TrainDepartureTime = 54300; // 15:00:05
+
     //public static int TrainDepartureTime = 54070; // 15:00:05
+    private static float elapsedTime;
 
     private static bool Trainstarted = false;
-    private static bool PassengerOnBoard = false;
+
+    public static bool PassengerOnBoard = false;
+
+    public static int StartTime = 54060; // 15:00:01
+    public static int TrainDepartureTime = 54300; // 15:00:05
 
     public static GameObject Passenger;
     public static Passenger PassengerBehaviour;
 
     public static GameObject Train;
+    public static GameObject TrainDoor;
+    public static GameObject StationDoor;
 
     public static TextMeshProUGUI UIGameTimer;
     public static TextMeshProUGUI UITrainStatus;
 
     public static List<TicketMachine> TicketMachines = new ();
 
-    private static float elapsedTime;
 
     public void Awake()
     {
+        // get Vending machine Scripts components
         Passenger = GameObject.Find("PR_Passenger");
 
         if (Passenger == null)
         {
-            Debug.Log("passenger game object not found");
+            Debug.LogError("passenger game object not found");
         }
         else
         {
             PassengerBehaviour = Passenger.GetComponent<Passenger>();
 
             if (PassengerBehaviour == null)
-                Debug.Log("passenger has no script on it");
+                Debug.LogError("passenger has no script on it");
         }
 
-        UIGameTimer = GameObject.Find("GameTime").GetComponent<TextMeshProUGUI>();
-        if (UIGameTimer == null)
-        {
-            Debug.LogError("GameTime game object not found");
-        }
-
-        UITrainStatus = GameObject.Find("TrainStatus").GetComponent<TextMeshProUGUI>();
-        if (UIGameTimer == null)
-        {
-            Debug.LogError("TrainStatus game object not found");
-        }
-
-        Train = GameObject.Find("PR_Train");
-        if (Train == null)
-            Debug.Log("train game object not found");
-
-
-        // set tickets machines :
+        // then set tickets machines
         var machines = FindObjectsOfType<VendingMachine>();
 
         foreach (var e in machines)
             TicketMachines.Add(new TicketMachine(e));
+
+        // UI Components
+
+        UIGameTimer = GameObject.Find("GameTime").GetComponent<TextMeshProUGUI>();
+        if (UIGameTimer == null)
+            Debug.LogError("GameTime not found");
+
+        UITrainStatus = GameObject.Find("TrainStatus").GetComponent<TextMeshProUGUI>();
+        if (UIGameTimer == null)
+            Debug.LogError("TrainStatus not found");
+
+        // GameObjects needed
+
+        Train = GameObject.Find("PR_Train");
+        if (Train == null)
+            Debug.LogError("PR_Train not found");
+
+        StationDoor = GameObject.Find("PR_Door");
+        if (StationDoor == null)
+            Debug.LogError("PR_Door not found");
+
+        TrainDoor = GameObject.Find("PR_TrainDoor");
+        if (StationDoor == null)
+            Debug.LogError("PR_TrainDoor not found");
     }
 
     public void Update()
@@ -159,6 +171,7 @@ public class GameManager : GameSingleton
             }
         }
 
+        //Debug.Log("GetVendorPosition :" + result.ToString());
         return result;
     }
 

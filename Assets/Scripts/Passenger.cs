@@ -1,6 +1,7 @@
 ﻿using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -9,29 +10,36 @@ using UnityEngine;
 /// </summary>
 public enum PassengerState
 {
+    None,
     Idle,
+    TakeTicket,
+    TicketTaken,
     Walk,
     Action,
     Failed,
+    Finished,
 }
 
 /// <summary>
 /// Data for passenger tasks,
-/// - destination 
 /// - state change
+/// - destination 
 /// - and wait time (coroutine should be replaced by an event)
+/// - a target object
 /// </summary>
-public class PassengerTask
+public class PassengerTask<T>
 {
-    public float WaitTime;
     public PassengerState Action;
+    public float WaitTime;
     public Vector3 Destination;
+    public T Target;
 
-    public PassengerTask(Vector3 destination, PassengerState action, float waitTime = 0f)
+    public PassengerTask(PassengerState action, Vector3 destination, T target, float waitTime = 0f)
     {
+        Action = action;
         WaitTime = waitTime;
         Destination = destination;
-        Action = action;
+        Target = target;
     }
 }
 
@@ -40,9 +48,9 @@ public class PassengerTask
 /// </summary>
 public class Passenger : MonoBehaviour
 { 
-    public const float reachDistance = 1f; // triggering distance
+    public const float reachDistance = 1.5f; // triggering distance
 
-    private PassengerState state;
+    private PassengerState state = PassengerState.None;
 
     private Seeker seeker;
 
@@ -51,84 +59,142 @@ public class Passenger : MonoBehaviour
     /// </summary>
     public PassengerState State
     {
+
         get => state;
         set
         {
             state = value;
+            Debug.Log($"{gameObject.name.ToString()} -> {state}");
             SetAnimation(state);
         }
     }
 
+
     private Animator animator;
 
-    public  Vector3 CurrentDestination { get; private set; } = Vector3.zero;
+    public Vector3 CurrentDestination { get; private set; } = Vector3.zero;
+
+    public bool IsWaiting { get; private set; } = false;
+
+    public float TaskWaitTime { get; private set; } = 0f;
 
     public readonly float PassengerSpeed = 1f; // TODO: get the IPassengerInstantiator value
 
-    public Queue<PassengerTask> Tasks = new();
+    public Queue<PassengerTask<TicketMachine>> Tasks = new();
 
     private void Awake()
     {
-        state = PassengerState.Idle;
 
         seeker = GetComponent<Seeker>();
 
         if (seeker == null)
             Debug.LogError("[Passenger] Seeker not found");
 
-
         animator = GetComponent<Animator>();
         animator = GameObject.Find("RM_MalePassenger").GetComponent<Animator>(); // TODO : get in a better way
 
-        SetTasks();
     }
+
+    private void Update()
+    {
+        // init Tasks
+        if (State == PassengerState.None)
+        {
+            State = PassengerState.Idle;
+            SetTasks();
+
+            return;
+        }
+
+        // Wait for next task?
+        if (IsWaiting)
+        {
+            if (TaskWaitTime > 0f)
+            {
+                TaskWaitTime -= Time.deltaTime;
+                Debug.Log("waiting : " + TaskWaitTime);
+            }
+            else
+            {
+                NextTask();
+                TaskWaitTime = 0f;
+                IsWaiting = false;
+            }
+        }
+        
+        // get distance to target
+        // and trigger a wait timer
+        var dist = Vector3.Distance(transform.position, CurrentDestination);
+        if (dist < reachDistance)
+        {
+            MoveStop();
+            IsWaiting = true;
+        }
+    }
+
+    private bool IsInTrain() => Vector3.Distance(GameManager.TrainDoor.transform.position, CurrentDestination) < 3.5f;
 
     /// <summary>
     /// Next task in queue
     /// <see cref="PassengerTask"/>
     /// </summary>
-    public void NextTask()
+    private void NextTask()
     {
-        PassengerTask next = Tasks.Dequeue();
+        PassengerTask<TicketMachine> next;
 
-        if (next != null)
+        if (Tasks.Count > 0)
         {
-            MoveTo(next.Destination);
-            state = next.Action;
+            next = Tasks.Dequeue();
         }
+        else
+        {
+            if (IsInTrain())
+            {
+                GameManager.PassengerOnBoard = true;
+                gameObject.SetActive(false);
+            }
+
+            State = PassengerState.Idle;
+            return;
+        }
+
+        if (CurrentTask == null)
+            return;
+
+        State = next.Action;
+
+        // looking for next target
+        MoveTo(next.Destination);
+
+        // lock / free vending machine
+        if (CurrentTask.Action == PassengerState.TakeTicket)
+        {
+            Debug.Log("Taking machine " + next.Target.Name.ToString());
+            next.Target.Available = false;
+        }
+
+        if (CurrentTask.Action == PassengerState.TicketTaken)
+        {
+            Debug.Log("Freeing machine " + next.Target.Name.ToString());
+            next.Target.Available = true;
+        }
+
+        // add required timer
+        TaskWaitTime = next.WaitTime;
     }
 
     /// <summary>
     /// Get the current task
     /// </summary>
-    public PassengerTask CurrentTask => Tasks.Peek();
-
-    private void Update()
+    public PassengerTask<TicketMachine> CurrentTask
     {
-        if (CurrentDestination != Vector3.zero)
+        get
         {
-            if (Vector3.Distance(transform.position, CurrentDestination) < reachDistance)
-            {                
-                if (CurrentTask.WaitTime > 0f)
-                    DelayedTask();
-                else
-                    NextTask();
-                
-            }
+            if (Tasks.Count == 0)
+                return null;
+
+            return Tasks.Peek();
         }
-    }
-
-    /// <summary>
-    /// Wait for next task
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator DelayedTask()
-    {
-        // TODO: replace by events
-        NextTask();
-        Debug.Log("now waiting for " + CurrentTask.WaitTime);
-
-        yield return new WaitForSeconds(CurrentTask.WaitTime);
     }
 
     /// <summary>
@@ -151,14 +217,58 @@ public class Passenger : MonoBehaviour
         if (machine == null)
             return;
 
-        Tasks.Enqueue(new PassengerTask(machine.Position, PassengerState.Walk, machine.Speed));
-        
-        MoveTo(machine.Position); // temp
+        // Going to machine 
+        Tasks.Enqueue(new PassengerTask<TicketMachine>(
+            PassengerState.TakeTicket,
+            machine.Position,
+            machine,
+            machine.Speed)
+        );
+
+        // tiket taken 
+        Tasks.Enqueue(new PassengerTask<TicketMachine>(
+            PassengerState.TicketTaken,
+            machine.Position,
+            machine,
+            0.5f)
+        );
+
+        // going to out door
+        Tasks.Enqueue(new PassengerTask<TicketMachine>(
+            PassengerState.Walk, 
+            GameManager.StationDoor.transform.position, 
+            machine,
+            0f)
+        );
+
+        // going in the train
+        Tasks.Enqueue(new PassengerTask<TicketMachine>(
+            PassengerState.Walk,
+            GameManager.TrainDoor.transform.position,
+            machine,
+            1f)
+        );
+
+        // finished
+        Tasks.Enqueue(new PassengerTask<TicketMachine>(
+            PassengerState.Idle,
+            GameManager.TrainDoor.transform.position,
+            machine,
+            0f)
+        );
+
+        NextTask();
     }
 
     public void MoveTo(Vector3 destination)
     {
         CurrentDestination = destination;
-        seeker.StartPath(gameObject.transform.position, destination);
+        seeker.StartPath(gameObject.transform.position, CurrentDestination);
+    }
+
+    public void MoveStop()
+    {
+        CurrentDestination = gameObject.transform.position;
+        seeker.StartPath(gameObject.transform.position, CurrentDestination);
     }
 }
