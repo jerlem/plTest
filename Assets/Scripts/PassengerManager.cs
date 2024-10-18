@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +8,7 @@ public class PassengerManager : MonoBehaviour, IDisposable
     private const float PassengerMaxSpeed = 2.0f;
     private const float SpawnRate = 2.0f;
 
-    public bool Spawning = false;
+    public bool Spawning = true;
 
     private float spawnDelay = 2f;
     private float nextSpeed = 0f;
@@ -17,8 +16,7 @@ public class PassengerManager : MonoBehaviour, IDisposable
     private GameObject passengerPrefab;
     private GameObject passengerContainer;
 
-    public List<GameObject> Passengers = new();
-    public List<Passenger> PassengersBehaviour = new();
+    public List<PassengerHandler> Passengers = new();
 
     private void Awake()
     {
@@ -27,8 +25,14 @@ public class PassengerManager : MonoBehaviour, IDisposable
         if (passengerContainer == null)
             Debug.LogError("No Passenger spawner GameObject");
 
+        
         //cached game object
         passengerPrefab = GameObject.Find("PR_Passenger");
+
+        if (passengerContainer == null)
+            Debug.LogError("PR_Passenger not found");
+
+        passengerPrefab.SetActive(false);
     }
 
     private void Update()
@@ -36,7 +40,6 @@ public class PassengerManager : MonoBehaviour, IDisposable
         if (!Spawning)
             return;
 
-        Debug.Log("spawn in " + spawnDelay);
 
         spawnDelay -= Time.deltaTime;
 
@@ -44,12 +47,18 @@ public class PassengerManager : MonoBehaviour, IDisposable
         {
             nextSpeed = UnityEngine.Random.Range(PassengerMinSpeed, PassengerMaxSpeed);
             spawnDelay = SpawnRate;
+            Spawn();
         }
+    }
+
+    private void UpdatePassengers()
+    {
+        foreach (var e in Passengers)
+            e.UpdatePassenger();
     }
 
     void OnDestroy() => Dispose();
 
-    // TODO: create a pool
     private void Spawn()
     {
         Debug.Log("Spawn passenger");
@@ -57,18 +66,20 @@ public class PassengerManager : MonoBehaviour, IDisposable
         string name = "Passenger_" + Passengers.Count;
         var go = Instantiate(passengerPrefab, passengerPrefab.transform.position, Quaternion.identity, passengerContainer.transform);
         go.SetActive(true);
-        Passengers.Add(go);
 
-        var newPassenger = go.GetComponent<Passenger>();
-        PassengersBehaviour.Add(newPassenger);
-
+        var newPassenger = new PassengerHandler(go);
+        Passengers.Add(newPassenger);
+        
         newPassenger.SetTasks();
         
     }
 
     public void Dispose()
     {
-        foreach (var e in Passengers)
-            DestroyImmediate(e);
+        for(int i= 0; i < Passengers.Count; i++)
+        {
+            DestroyImmediate(Passengers[i].Parent);
+            Passengers[i] = null;
+        }
     }
 }

@@ -31,6 +31,7 @@ public class GameManager : GameSingleton
 {
     private const float TrainSpeed = 10f;
 
+    public static PassengerManager PassengerManager;
 
     //public static int TrainDepartureTime = 54070; // 15:00:05
     private static float elapsedTime;
@@ -43,7 +44,7 @@ public class GameManager : GameSingleton
     public static int TrainDepartureTime = 54300; // 15:00:05
 
     public static GameObject Passenger;
-    public static Passenger PassengerBehaviour;
+    public static PassengerHandler PassengerBehaviour;
 
     public static GameObject Train;
     public static GameObject TrainDoor;
@@ -52,25 +53,13 @@ public class GameManager : GameSingleton
     public static TextMeshProUGUI UIGameTimer;
     public static TextMeshProUGUI UITrainStatus;
 
-    public static List<TicketMachine> TicketMachines = new ();
+    public static List<TicketMachine> TicketMachines = new();
 
 
     public void Awake()
     {
-        // get Vending machine Scripts components
-        Passenger = GameObject.Find("PR_Passenger");
+        PassengerManager = gameObject.AddComponent<PassengerManager>();
 
-        if (Passenger == null)
-        {
-            Debug.LogError("passenger game object not found");
-        }
-        else
-        {
-            PassengerBehaviour = Passenger.GetComponent<Passenger>();
-
-            if (PassengerBehaviour == null)
-                Debug.LogError("passenger has no script on it");
-        }
 
         // then set tickets machines
         var machines = FindObjectsOfType<VendingMachine>();
@@ -103,13 +92,14 @@ public class GameManager : GameSingleton
             Debug.LogError("PR_TrainDoor not found");
     }
 
+
     public void Update()
     {
         UIGameTimer.text = UpdateTimer();
 
         if (Trainstarted)
         {
-            PassengerBehaviour.State = PassengerState.Failed; 
+            PassengerBehaviour.State = PassengerState.Failed;
             MoveTrain();
         }
 
@@ -156,23 +146,28 @@ public class GameManager : GameSingleton
     /// <returns></returns>
     public static TicketMachine GetVendorPosition()
     {
-        float min = 100f;
-        TicketMachine result = null;
+        //float min = 100f;
+        //TicketMachine result = null;
 
-        foreach (var p in TicketMachines)
-        {
-            if (!p.Available)
-                continue;
+        //foreach (var p in TicketMachines)
+        //{
+        //    if (!p.Available)
+        //        continue;
 
-            if (min > p.Speed)
-            {
-                min = p.Speed;
-                result = p;
-            }
-        }
+        //    if (min > p.Speed)
+        //    {
+        //        min = p.Speed;
+        //        result = p;
+        //    }
+        //}
+
+        // TODO: fix this
+        int i = UnityEngine.Random.Range(0, TicketMachines.Count);
+        return TicketMachines[i];
+
 
         //Debug.Log("GetVendorPosition :" + result.ToString());
-        return result;
+        //return result;
     }
 
 }

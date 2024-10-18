@@ -1,7 +1,5 @@
 ﻿using Pathfinding;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -44,15 +42,17 @@ public class PassengerTask<T>
 }
 
 /// <summary>
-/// Passenger behaviour
+/// Passenger
 /// </summary>
-public class Passenger : MonoBehaviour
+public class PassengerHandler
 { 
     public const float reachDistance = 1.5f; // triggering distance
 
     private PassengerState state = PassengerState.None;
 
     private Seeker seeker;
+
+    public GameObject Parent { get; private set; }
 
     /// <summary>
     /// property linked to animator
@@ -64,7 +64,6 @@ public class Passenger : MonoBehaviour
         set
         {
             state = value;
-            Debug.Log($"{gameObject.name.ToString()} -> {state}");
             SetAnimation(state);
         }
     }
@@ -82,25 +81,28 @@ public class Passenger : MonoBehaviour
 
     public Queue<PassengerTask<TicketMachine>> Tasks = new();
 
-    private void Awake()
+    public PassengerHandler(GameObject parent)
     {
+        Debug.Log("created passenger " + parent.name);
+        Parent = parent;
 
-        seeker = GetComponent<Seeker>();
+        seeker = Parent.GetComponent<Seeker>();
 
         if (seeker == null)
             Debug.LogError("[Passenger] Seeker not found");
 
-        animator = GetComponent<Animator>();
-        animator = GameObject.Find("RM_MalePassenger").GetComponent<Animator>(); // TODO : get in a better way
+        animator = Parent.GetComponent<Animator>();
+        animator = GameObject.Find("RM_MalePassenger").GetComponent<Animator>(); 
 
     }
 
-    private void Update()
+    public void UpdatePassenger()
     {
         // init Tasks
         if (State == PassengerState.None)
         {
             State = PassengerState.Idle;
+
             SetTasks();
 
             return;
@@ -124,7 +126,8 @@ public class Passenger : MonoBehaviour
         
         // get distance to target
         // and trigger a wait timer
-        var dist = Vector3.Distance(transform.position, CurrentDestination);
+        var dist = Vector3.Distance(Parent.transform.position, CurrentDestination);
+
         if (dist < reachDistance)
         {
             MoveStop();
@@ -151,7 +154,7 @@ public class Passenger : MonoBehaviour
             if (IsInTrain())
             {
                 GameManager.PassengerOnBoard = true;
-                gameObject.SetActive(false);
+                Parent.gameObject.SetActive(false);
             }
 
             State = PassengerState.Idle;
@@ -263,12 +266,12 @@ public class Passenger : MonoBehaviour
     public void MoveTo(Vector3 destination)
     {
         CurrentDestination = destination;
-        seeker.StartPath(gameObject.transform.position, CurrentDestination);
+        seeker.StartPath(Parent.gameObject.transform.position, CurrentDestination);
     }
 
     public void MoveStop()
     {
-        CurrentDestination = gameObject.transform.position;
-        seeker.StartPath(gameObject.transform.position, CurrentDestination);
+        CurrentDestination = Parent.gameObject.transform.position;
+        seeker.StartPath(Parent.gameObject.transform.position, CurrentDestination);
     }
 }
