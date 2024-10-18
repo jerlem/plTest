@@ -3,12 +3,23 @@
   "WorkspaceRootPath": "C:\\Git\\plTest\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|c:\\git\\pltest\\assets\\scripts\\passenger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\passenger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|c:\\git\\pltest\\assets\\scripts\\passengermanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\passengermanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|c:\\git\\pltest\\assets\\scripts\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|C:\\Git\\plTest\\assets\\scripts\\scene2manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{56C7553A-E5A2-6E57-DF20-6F65A281D4D7}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\scene2manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Git\\TreasureHunters\\TreasureHunters\\Assets\\Scripts\\Managers\\EventManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Git\\plTest\\assets\\scripts\\eventmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\eventmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -17,31 +28,18 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 227,
-          "SelectedChildIndex": 1,
+          "DockedWidth": 108,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Passenger.cs",
-              "DocumentMoniker": "C:\\Git\\plTest\\Assets\\Scripts\\Passenger.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Passenger.cs",
-              "ToolTip": "C:\\Git\\plTest\\Assets\\Scripts\\Passenger.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Passenger.cs",
-              "ViewState": "AgIAAHwAAAAAAAAAAAAowIYAAABcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-18T11:16:03.063Z",
-              "EditorCaption": ""
             }
           ]
         },
         {
-          "DockedWidth": 197,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 366,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
@@ -51,9 +49,66 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\GameManager.cs",
               "ToolTip": "C:\\Git\\plTest\\Assets\\Scripts\\GameManager.cs",
               "RelativeToolTip": "Assets\\Scripts\\GameManager.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAtwC8AAAAjAAAAAAAAAA==",
+              "ViewState": "AgIAAIoAAAAAAAAAAAAAAH4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-18T11:16:07.74Z",
+              "WhenOpened": "2024-10-18T15:06:55.685Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PassengerManager.cs",
+              "DocumentMoniker": "C:\\Git\\plTest\\Assets\\Scripts\\PassengerManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PassengerManager.cs",
+              "ToolTip": "C:\\Git\\plTest\\Assets\\Scripts\\PassengerManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PassengerManager.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-18T14:38:59.53Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 266,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "EventManager.cs",
+              "DocumentMoniker": "C:\\Git\\TreasureHunters\\TreasureHunters\\Assets\\Scripts\\Managers\\EventManager.cs",
+              "RelativeDocumentMoniker": "..\\TreasureHunters\\TreasureHunters\\Assets\\Scripts\\Managers\\EventManager.cs",
+              "ToolTip": "C:\\Git\\TreasureHunters\\TreasureHunters\\Assets\\Scripts\\Managers\\EventManager.cs",
+              "RelativeToolTip": "..\\TreasureHunters\\TreasureHunters\\Assets\\Scripts\\Managers\\EventManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-18T14:28:46.359Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "EventManager.cs",
+              "DocumentMoniker": "C:\\Git\\plTest\\Assets\\Scripts\\EventManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EventManager.cs",
+              "ToolTip": "C:\\Git\\plTest\\Assets\\Scripts\\EventManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EventManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-18T14:27:09.465Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Scene2Manager.cs",
+              "DocumentMoniker": "C:\\Git\\plTest\\Assets\\Scripts\\Scene2Manager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Scene2Manager.cs",
+              "ToolTip": "C:\\Git\\plTest\\Assets\\Scripts\\Scene2Manager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Scene2Manager.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAswCYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-18T14:08:20.879Z",
               "EditorCaption": ""
             }
           ]
